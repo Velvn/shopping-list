@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shopping List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg0: #D6D2C4;
+    --bg1: #CBC6B5;
+    --card: #DEDBCF;
+    --card-hover: #D2CEBF;
+    --border: #B5B0A0;
+    --border-soft: #C4BFAE;
+    --text: #1C1B17;
+    --muted: #524E40;
+    --muted-dim: #8B8779;
+    --accent: #8C7A4A;
+    --accent-soft: rgba(140, 122, 74, 0.14);
+    --accent-glow: rgba(140, 122, 74, 0.35);
+    --lunch: #5B6B52;
+    --dinner: #9C5B3C;
+    --highlight: #3A3A32;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg0);
+    color: var(--text);
+    padding: 28px 16px 100px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+
+  /* Header */
+  header { margin-bottom: 24px; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  h1 {
+    font-size: 1.9rem; font-weight: 800; margin: 0 0 6px;
+    letter-spacing: -0.02em; color: var(--text);
+  }
+  .sub { color: var(--muted); font-size: 0.95rem; line-height: 1.5; max-width: 54ch; }
+
+  .meal-tags { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+  .meal-tag {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 7px 14px 7px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600;
+    color: var(--text);
+  }
+  .meal-tag .swatch { width: 9px; height: 9px; border-radius: 50%; }
+  .meal-tag.lunch .swatch { background: var(--lunch); }
+  .meal-tag.dinner .swatch { background: var(--dinner); }
+
+  /* Progress */
+  .progress-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 20px; margin: 24px 0; display: flex; align-items: center; gap: 18px;
+  }
+  .progress-ring { position: relative; width: 54px; height: 54px; flex-shrink: 0; }
+  .progress-ring svg { transform: rotate(-90deg); width: 54px; height: 54px; }
+  .progress-ring circle { fill: none; stroke-width: 5; }
+  .progress-ring .bg { stroke: var(--border); }
+  .progress-ring .fg { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset .4s cubic-bezier(.4,0,.2,1); }
+  .progress-pct {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent);
+  }
+  .progress-text { flex: 1; }
+  .progress-text .big { font-weight: 700; font-size: 1.02rem; color: var(--text); }
+  .progress-text .small { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+
+  /* Sections */
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .section-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 15px 20px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .section-head .icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; background: var(--accent-soft); flex-shrink: 0;
+  }
+  .section-head h2 {
+    margin: 0; font-size: 0.98rem; font-weight: 700; flex: 1; letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .section-head .count {
+    font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted);
+    background: var(--bg1); padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border-soft);
+  }
+  .section-head .chevron {
+    color: var(--muted); transition: transform .25s;
+    font-size: 0.75rem;
+  }
+  .section.collapsed .chevron { transform: rotate(-90deg); }
+  .section.collapsed ul { display: none; }
+
+  ul { list-style: none; margin: 0; padding: 4px 0; }
+  li {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-soft);
+    transition: background .15s;
+    position: relative;
+  }
+  li:last-child { border-bottom: none; }
+  li:hover { background: var(--card-hover); }
+  li.checked { opacity: 0.5; }
+  li.checked .item-name { text-decoration: line-through; }
+
+  .check-box {
+    width: 21px; height: 21px; border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--bg1);
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .15s;
+  }
+  .check-box svg { width: 13px; height: 13px; opacity: 0; transform: scale(0.5); transition: all .15s; }
+  li.checked .check-box { background: var(--highlight); border-color: var(--highlight); }
+  li.checked .check-box svg { opacity: 1; transform: scale(1); }
+  input[type=checkbox] { display: none; }
+
+  label { flex: 1; cursor: pointer; }
+  .item-name { font-weight: 600; font-size: 0.95rem; display: block; color: var(--text); }
+  .note { font-size: 0.78rem; color: var(--muted-dim); display: block; margin-top: 3px; }
+  .item-qty {
+    color: var(--muted); font-size: 0.82rem; font-family: 'DM Mono', monospace;
+    margin-left: auto; text-align: right; white-space: nowrap; padding-top: 1px; flex-shrink: 0;
+  }
+
+  .actions { display: flex; gap: 10px; margin-top: 24px; }
+  .btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+    background: var(--card); border: 1px solid var(--border); color: var(--muted);
+    padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 0.86rem;
+    font-weight: 600; font-family: inherit; transition: all .15s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+  .btn.primary { color: var(--highlight); border-color: var(--accent); font-weight: 700; }
+
+  footer { text-align: center; color: var(--muted-dim); font-size: 0.78rem; margin-top: 32px; }
+
+  @media (max-width: 420px) {
+    h1 { font-size: 1.55rem; }
+    .section-head { padding: 13px 16px; }
+    li { padding: 11px 16px; gap: 11px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow"><span class="dot"></span>MEAL PREP · SHOPPING LIST</div>
+    <h1>Groceries</h1>
+    <div class="sub">Everything needed for Creamy Tuna Cucumber Salad and Chicken Street Corn Salad. Shared ingredients are combined into one line.</div>
+    <div class="meal-tags">
+      <span class="meal-tag lunch"><span class="swatch"></span>Lunch — Tuna Cucumber Salad</span>
+      <span class="meal-tag dinner"><span class="swatch"></span>Dinner — Chicken Street Corn Salad</span>
+    </div>
+  </header>
+
+  <div class="progress-card">
+    <div class="progress-ring">
+      <svg viewBox="0 0 54 54">
+        <circle class="bg" cx="27" cy="27" r="23"></circle>
+        <circle class="fg" id="progressCircle" cx="27" cy="27" r="23" stroke-dasharray="144.5" stroke-dashoffset="144.5"></circle>
+      </svg>
+      <div class="progress-pct" id="progressPct">0%</div>
+    </div>
+    <div class="progress-text">
+      <div class="big" id="progressBig">0 of 0 items</div>
+      <div class="small">Tap an item to check it off — progress saves automatically</div>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="actions">
+    <button class="btn" onclick="toggleAllSections()">Collapse all</button>
+    <button class="btn primary" onclick="resetAll()">Reset checklist</button>
+  </div>
+
+  <footer>Generated for Anthony's meal prep · updates saved locally in this browser</footer>
+</div>
+
+<script>
+const data = [
+  { id: "produce", icon: "🥬", label: "Produce", items: [
+    ["Cucumbers", "2 large", "tuna salad"],
+    ["Red onion", "2 large", "1 large for chicken + 1/2 for tuna"],
+    ["Red bell pepper", "1 large", "chicken salad"],
+    ["Cilantro", "1 bunch", "chicken salad"],
+    ["Jalapeños", "3", "chicken salad"],
+    ["Garlic", "1 bulb (need 2 cloves fresh)", "tuna dressing"],
+    ["Lemon", "1", "tuna dressing"],
+    ["Limes", "2–3", "chicken marinade + sauce"],
+    ["Fresh dill", "2–3 tbsp (optional)", "tuna salad"],
+  ]},
+  { id: "meat", icon: "🍗", label: "Meat & Seafood", items: [
+    ["Chicken breast", "800 g", "chicken salad"],
+    ["Canned tuna", "2 cans", "tuna salad"],
+  ]},
+  { id: "dairy", icon: "🧀", label: "Dairy & Refrigerated", items: [
+    ["Plain 0% Greek yogurt", "~2 cups / 500 g tub", "1 cup tuna dressing + 1 cup chicken sauce"],
+    ["Cotija cheese", "50 g", "chicken salad"],
+  ]},
+  { id: "pantry", icon: "🥫", label: "Canned & Pantry", items: [
+    ["Canned corn", "3 cups total (~2 cans)", "1 cup tuna + 2 cups chicken"],
+    ["Light mayo", "3 tbsp", "tuna dressing — check if already have"],
+    ["Yellow mustard", "2 tbsp", "tuna dressing"],
+    ["Honey", "2 tsp", "tuna dressing"],
+    ["Hot sauce", "1 tbsp", "chicken sauce"],
+    ["Tajín seasoning", "1 tbsp", "chicken sauce"],
+    ["Avocado oil", "1 tbsp", "chicken marinade"],
+  ]},
+  { id: "spices", icon: "🧂", label: "Spices (check stock first)", items: [
+    ["Chili powder", "2 tsp", "chicken marinade"],
+    ["Cumin", "1.5 tsp", "chicken marinade"],
+    ["Garlic powder", "1 tsp", "chicken marinade"],
+    ["Paprika", "1 tsp", "chicken marinade"],
+    ["Salt", "to taste", "both recipes"],
+    ["Black pepper", "to taste", "both recipes"],
+  ]},
+];
+
+const CHECK_KEY = "shopping-list-checked-v2";
+const COLLAPSE_KEY = "shopping-list-collapsed-v2";
+let checked = JSON.parse(localStorage.getItem(CHECK_KEY) || "{}");
+let collapsed = JSON.parse(localStorage.getItem(COLLAPSE_KEY) || "{}");
+
+const CHECK_ICON = `<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#D6D2C4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function totalCount() {
+  return data.reduce((sum, s) => sum + s.items.length, 0);
+}
+function checkedCount() {
+  return Object.values(checked).filter(Boolean).length;
+}
+
+function updateProgress() {
+  const total = totalCount();
+  const done = checkedCount();
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const circumference = 144.5;
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById("progressCircle").style.strokeDashoffset = offset;
+  document.getElementById("progressPct").textContent = pct + "%";
+  document.getElementById("progressBig").textContent = `${done} of ${total} items`;
+}
+
+function render() {
+  const container = document.getElementById("sections");
+  container.innerHTML = "";
+  data.forEach(section => {
+    const secEl = document.createElement("div");
+    secEl.className = "section" + (collapsed[section.id] ? " collapsed" : "");
+    secEl.id = "sec-" + section.id;
+
+    const doneInSection = section.items.filter((_, i) => checked[section.id + "-" + i]).length;
+
+    secEl.innerHTML = `
+      <div class="section-head" onclick="toggleSection('${section.id}')">
+        <div class="icon">${section.icon}</div>
+        <h2>${section.label}</h2>
+        <span class="count">${doneInSection}/${section.items.length}</span>
+        <span class="chevron">▾</span>
+      </div>
+      <ul id="list-${section.id}"></ul>
+    `;
+    container.appendChild(secEl);
+
+    const ul = secEl.querySelector("ul");
+    section.items.forEach(([name, qty, note], idx) => {
+      const id = section.id + "-" + idx;
+      const li = document.createElement("li");
+      if (checked[id]) li.classList.add("checked");
+      li.innerHTML = `
+        <div class="check-box" data-id="${id}">${CHECK_ICON}</div>
+        <label data-id="${id}">
+          <span class="item-name">${name}</span>
+          <span class="note">${note}</span>
+        </label>
+        <span class="item-qty">${qty}</span>
+      `;
+      ul.appendChild(li);
+    });
+  });
+
+  container.querySelectorAll("[data-id]").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = el.getAttribute("data-id");
+      checked[id] = !checked[id];
+      localStorage.setItem(CHECK_KEY, JSON.stringify(checked));
+      render();
+      updateProgress();
+    });
+  });
+
+  updateProgress();
+}
+
+function toggleSection(id) {
+  collapsed[id] = !collapsed[id];
+  localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed));
+  render();
+}
+
+let allCollapsed = false;
+function toggleAllSections() {
+  allCollapsed = !allCollapsed;
+  data.forEach(s => collapsed[s.id] = allCollapsed);
+  localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed));
+  render();
+}
+
+function resetAll() {
+  if (!confirm("Clear all checked items?")) return;
+  checked = {};
+  localStorage.setItem(CHECK_KEY, JSON.stringify(checked));
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
