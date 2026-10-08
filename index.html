@@ -208,45 +208,49 @@
 <script>
 const data = [
   { id: "produce", icon: "🥬", label: "Produce", items: [
-    ["Cucumbers", "2 large", "tuna salad"],
-    ["Red onion", "2 large", "1 large for chicken + 1/2 for tuna"],
-    ["Red bell pepper", "1 large", "chicken salad"],
-    ["Cilantro", "1 bunch", "chicken salad"],
-    ["Jalapeños", "3", "chicken salad"],
-    ["Garlic", "1 bulb (need 2 cloves fresh)", "tuna dressing"],
-    ["Lemon", "1", "tuna dressing"],
-    ["Limes", "2–3", "chicken marinade + sauce"],
-    ["Fresh dill", "2–3 tbsp (optional)", "tuna salad"],
+    ["Cucumbers", "7 large", "tuna salad — 1 per day"],
+    ["Red onion", "4 large", "~1.75 large chicken + ~1.75 large tuna, rounded up"],
+    ["Red bell pepper", "2 large", "chicken salad"],
+    ["Cilantro", "2 bunches", "chicken salad"],
+    ["Jalapeños", "5–6", "chicken salad"],
+    ["Garlic", "1 bulb (need ~7 cloves fresh)", "tuna dressing"],
+    ["Lemon", "4", "tuna dressing"],
+    ["Limes", "3", "chicken marinade + sauce"],
+    ["Fresh dill", "~1/2 cup fresh (optional)", "tuna salad"],
   ]},
   { id: "meat", icon: "🍗", label: "Meat & Seafood", items: [
-    ["Chicken breast", "800 g", "chicken salad"],
-    ["Canned tuna", "2 cans", "tuna salad"],
+    ["Chicken breast", "1.4 kg", "chicken salad — 7 servings"],
+    ["Canned tuna", "7 cans", "tuna salad — 1 per day"],
   ]},
   { id: "dairy", icon: "🧀", label: "Dairy & Refrigerated", items: [
-    ["Carrefour Extra Greek yogurt (full-fat)", "~2 cups / 500 g tub", "1 cup tuna dressing + 1 cup chicken sauce"],
-    ["Feta cheese", "50 g", "chicken salad — cotija substitute"],
+    ["Carrefour Extra Greek yogurt (full-fat)", "1.5 kg total (one 1kg tub + one 500g tub)", "tuna dressing + chicken sauce, 7 servings each"],
+    ["Feta cheese", "100 g pack", "chicken salad — cotija substitute, 7 servings"],
   ]},
   { id: "pantry", icon: "🥫", label: "Canned & Pantry", items: [
-    ["Canned corn", "3 cups total (~2 cans)", "1 cup tuna + 2 cups chicken"],
-    ["Light mayo", "3 tbsp", "tuna dressing — check if already have"],
-    ["Yellow mustard", "2 tbsp", "tuna dressing"],
-    ["Honey", "2 tsp", "tuna dressing"],
-    ["Hot sauce", "1 tbsp", "chicken sauce"],
-    ["Tajín seasoning", "1 tbsp", "chicken sauce"],
-    ["Avocado oil", "1 tbsp", "chicken marinade"],
+    ["Canned corn", "~5 cans (7 cups total needed)", "tuna + chicken, 7 servings each"],
+    ["Light mayo", "1 jar", "tuna dressing — covers ~10.5 tbsp needed"],
+    ["Yellow mustard", "1 bottle", "tuna dressing — covers ~7 tbsp needed"],
+    ["Honey", "1 small jar", "tuna dressing — covers ~2.5 tbsp needed"],
+    ["Hot sauce", "1 bottle", "chicken sauce — covers ~1.75 tbsp needed"],
+    ["Tajín seasoning", "1 container", "chicken sauce"],
+    ["Avocado oil", "check stock", "chicken marinade — ~2 tbsp needed"],
   ]},
   { id: "spices", icon: "🧂", label: "Spices (check stock first)", items: [
-    ["Chili powder", "2 tsp", "chicken marinade"],
-    ["Cumin", "1.5 tsp", "chicken marinade"],
-    ["Garlic powder", "1 tsp", "chicken marinade"],
-    ["Paprika", "1 tsp", "chicken marinade"],
+    ["Chili powder", "~3.5 tsp needed", "chicken marinade"],
+    ["Cumin", "~2.75 tsp needed", "chicken marinade"],
+    ["Garlic powder", "~1.75 tsp needed", "chicken marinade"],
+    ["Paprika", "~1.75 tsp needed", "chicken marinade"],
     ["Salt", "to taste", "both recipes"],
     ["Black pepper", "to taste", "both recipes"],
   ]},
 ];
 
-const CHECK_KEY = "shopping-list-checked-v2";
-const COLLAPSE_KEY = "shopping-list-collapsed-v2";
+// v3: scaled to 7 servings/week (was 2 tuna + 4 chicken). Prep in two
+// batches (e.g. Thu night for Fri–Mon, Mon for Tue–Thu) since the
+// yogurt/mayo dressing shouldn't sit dressed longer than ~3–4 days —
+// raw/dry components keep fine for the full week.
+const CHECK_KEY = "shopping-list-checked-v3";
+const COLLAPSE_KEY = "shopping-list-collapsed-v3";
 let checked = JSON.parse(localStorage.getItem(CHECK_KEY) || "{}");
 let collapsed = JSON.parse(localStorage.getItem(COLLAPSE_KEY) || "{}");
 
